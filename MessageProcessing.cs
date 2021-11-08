@@ -22,11 +22,12 @@ namespace hso.messages
             // Setup Queue Reference
             QueueClient queue = new QueueClient(connectionString, queueName);
 
-            // Get the next messages from the queue
+            // Get queue properties to find the number of messages in the queue, then setup integer for our do loop.
             QueueProperties properties = queue.GetProperties();
             int countmessages = properties.ApproximateMessagesCount;
             int i = 1;
 
+            // Get messages
             do
             {
 
