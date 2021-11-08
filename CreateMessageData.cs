@@ -19,6 +19,7 @@ namespace hso.createmessages
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            // Boilerplate request stuff for Azure Function
             log.LogInformation("C# HTTP trigger function processed a request.");
 
             string name = req.Query["name"];
@@ -27,11 +28,9 @@ namespace hso.createmessages
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
 
-            // We'll need a connection string to your Azure Storage account.
-            string connectionString = "DefaultEndpointsProtocol=https;AccountName=sjrrothwellqueuestorlrn;AccountKey=3WgQK1u5DWCTLs6Di2z+/k2hWT6hJGpdBgWzH49PiwZJVNqn+P+yyE4anp3KFm44YOI+JQTaSz809CMciJfysA==;EndpointSuffix=core.windows.net";
-
-            // Name of an existing queue we'll operate on
-            string queueName = "orderprocessing";
+            // Connection String & Queue to Read
+            string connectionString = Environment.GetEnvironmentVariable("WEBSITE_QUEUELOCATION");
+            string queueName = Environment.GetEnvironmentVariable("WEBSITE_QUEUENAME");
 
             // Get a reference to a queue 
             QueueClient queue = new QueueClient(connectionString, queueName);
@@ -57,7 +56,6 @@ namespace hso.createmessages
         // Message Creation Method
         static async Task InsertMessageAsync(QueueClient theQueue, string newMessage)
         {
-
 
             if (null != await theQueue.CreateIfNotExistsAsync())
             {
